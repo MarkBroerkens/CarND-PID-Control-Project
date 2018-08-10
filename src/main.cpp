@@ -1,9 +1,10 @@
 #include <uWS/uWS.h>
 #include <iostream>
-#include "json.hpp"
-#include "PID.h"
 #include <math.h>
 #include <algorithm>    // std::max
+#include "json.hpp"
+#include "PID.h"
+#include "PIDTuner.h"
 
 // for convenience
 using json = nlohmann::json;
@@ -26,6 +27,7 @@ const double MAX_THROTTLE = 1.0;
 const double MIN_THROTTLE = -1.0;
 const double MIN_STEERING = -1.0;
 const double MAX_STEERING = 1.0;
+const bool twiddle = true;
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -42,19 +44,34 @@ std::string hasData(std::string s) {
   return "";
 }
 
+
+void reset_simulator(uWS::WebSocket<uWS::SERVER>& ws)
+  {
+    // reset
+    std::string msg("42[\"reset\", {}]");
+    ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+  }
+
+
 int main() {
   uWS::Hub h;
 
   PID pid_steering_angle, pid_throttle;
 
+
   // Lesson 16: PID Control, 11 PID Implementation
   // pid_steering_angle.Init(0,2, 0,004, 3)
   pid_steering_angle.Init(0.14, 0.00027, 6);
   //pid_steering_angle.Init(0.134611, 0.000270736, 5);
-  pid_throttle.Init(.001, 0.00004, 0.1);
+  pid_throttle.Init(.1, 0.0, 1);
+
+
+  PIDTuner pidtuner(pid_steering_angle, pid_throttle);
+
+
 
   h.onMessage(
-      [&pid_steering_angle, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+      [&pid_steering_angle, &pid_throttle, &pidtuner](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
         // "42" at the start of the message means there's a websocket message event.
         // The 4 signifies a websocket message
         // The 2 signifies a websocket event
@@ -74,10 +91,11 @@ int main() {
               pid_steering_angle.UpdateError(cte);
               double steer_value = pid_steering_angle.GetControl();
 
-              double target_speed = std::max(0.0, MAX_SPEED * ( 0.7 - fabs(angle/MAX_ANGLE*cte) / 4));
+              double target_speed = std::max(0.0, MAX_SPEED * ( 1.0 - fabs(angle/MAX_ANGLE*cte) / 4));
+              target_speed = std::min(100.0, target_speed);
               pid_throttle.UpdateError(speed - target_speed);
               std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
-              double throttle_value = pid_throttle.GetControl();
+              double throttle_value = 0.7 + pid_throttle.GetControl();
 
               // DEBUG
               std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;
@@ -89,6 +107,11 @@ int main() {
               auto msg = "42[\"steer\"," + msgJson.dump() + "]";
               std::cout << msg << std::endl;
               ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+
+              if (pidtuner.hasFinishedRun()) {
+                reset_simulator(ws);
+                pidtuner.updateParams();
+              }
             }
           } else {
             // Manual driving
@@ -133,3 +156,7 @@ int main() {
   }
   h.run();
 }
+
+
+
+
