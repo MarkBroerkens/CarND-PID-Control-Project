@@ -74,10 +74,10 @@ int main() {
               pid_steering_angle.UpdateError(cte);
               double steer_value = pid_steering_angle.GetControl();
 
-              double target_speed = std::max(10.0, MAX_SPEED * ( 0.7 - fabs(angle/MAX_ANGLE*cte) / 4));
+              double target_speed = std::max(0.0, MAX_SPEED * ( 0.7 - fabs(angle/MAX_ANGLE*cte) / 4));
               pid_throttle.UpdateError(speed - target_speed);
               std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
-              double throttle_value = 0.1 + (pid_throttle.GetControl());
+              double throttle_value = pid_throttle.GetControl();
 
               // DEBUG
               std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;
