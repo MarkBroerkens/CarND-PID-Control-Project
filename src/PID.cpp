@@ -30,3 +30,13 @@ double PID::TotalError() {
   return p_error * Kp + i_error * Ki + d_error * Kd;
 }
 
+double PID::GetControl() {
+  double control_value = -Kp*p_error - Kd*d_error - Ki*i_error;
+  if (control_value < -1) {
+    control_value = -1;
+  }
+  else if (control_value > 1) {
+    control_value = 1;
+  }
+  return control_value;
+}

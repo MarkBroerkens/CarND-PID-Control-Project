@@ -49,9 +49,9 @@ int main() {
 
   // Lesson 16: PID Control, 11 PID Implementation
   // pid_steering_angle.Init(0,2, 0,004, 3)
-  pid_steering_angle.Init(0.10, 0.0002, 5);
+  pid_steering_angle.Init(0.14, 0.00027, 6);
   //pid_steering_angle.Init(0.134611, 0.000270736, 5);
-  pid_throttle.Init(.1, 0.00004, 10.);
+  pid_throttle.Init(.001, 0.00004, 0.1);
 
   h.onMessage(
       [&pid_steering_angle, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
@@ -72,18 +72,12 @@ int main() {
               std::cout << "CTE: " << cte << " angle: " << angle << " speed: " << speed << std::endl;
 
               pid_steering_angle.UpdateError(cte);
-              double steer_value = -pid_steering_angle.TotalError();
-              if (steer_value > MAX_STEERING) {
-                steer_value = MAX_STEERING;
-              } else if (steer_value < MIN_STEERING) {
-                steer_value = MIN_STEERING;
-              }
+              double steer_value = pid_steering_angle.GetControl();
 
-              double target_speed = MAX_SPEED * ( 1.0 - fabs(steer_value) / 2);
-
-              pid_throttle.UpdateError(target_speed - speed);
+              double target_speed = std::max(10.0, MAX_SPEED * ( 0.7 - fabs(angle/MAX_ANGLE*cte) / 4));
+              pid_throttle.UpdateError(speed - target_speed);
               std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
-              double throttle_value = 1.0 + (pid_throttle.TotalError()/MAX_SPEED );
+              double throttle_value = 0.1 + (pid_throttle.GetControl());
 
               // DEBUG
               std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;
