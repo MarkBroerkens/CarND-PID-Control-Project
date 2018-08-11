@@ -23,11 +23,7 @@ double rad2deg(double x) {
 const double MAX_SPEED = 100.;
 const double MAX_ANGLE = 25.;
 
-const double MAX_THROTTLE = 1.0;
-const double MIN_THROTTLE = -1.0;
-const double MIN_STEERING = -1.0;
-const double MAX_STEERING = 1.0;
-const bool twiddle = true;
+const bool twiddle = false;
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -61,12 +57,14 @@ int main() {
 
   // Lesson 16: PID Control, 11 PID Implementation
   // pid_steering_angle.Init(0,2, 0,004, 3)
-  pid_steering_angle.Init(0.14, 0.00027, 6);
+  // pid_steering_angle.Init(0.14, 0.00027, 6);
+  // pid_steering_angle.Init(0.241986, 0.00027, 5.67539),
+  pid_steering_angle.Init(0.290244, 0.00027, 5.67539);
   //pid_steering_angle.Init(0.134611, 0.000270736, 5);
   pid_throttle.Init(.1, 0.0, 1);
 
 
-  PIDTuner pidtuner(pid_steering_angle, pid_throttle);
+  PIDTuner pidtuner(pid_steering_angle, pid_throttle, 0.2);
 
 
 
@@ -86,7 +84,8 @@ int main() {
               double cte = std::stod(j[1]["cte"].get<std::string>());
               double speed = std::stod(j[1]["speed"].get<std::string>());
               double angle = std::stod(j[1]["steering_angle"].get<std::string>());
-              std::cout << "CTE: " << cte << " angle: " << angle << " speed: " << speed << std::endl;
+              // DEBUG
+              // std::cout << "CTE: " << cte << " angle: " << angle << " speed: " << speed << std::endl;
 
               pid_steering_angle.UpdateError(cte);
               double steer_value = pid_steering_angle.GetControl();
@@ -94,23 +93,30 @@ int main() {
               double target_speed = std::max(0.0, MAX_SPEED * ( 1.0 - fabs(angle/MAX_ANGLE*cte) / 4));
               target_speed = std::min(100.0, target_speed);
               pid_throttle.UpdateError(speed - target_speed);
-              std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
+              // DEBUG
+              // std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
               double throttle_value = 0.7 + pid_throttle.GetControl();
 
               // DEBUG
-              std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;
+              // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;
 
               json msgJson;
               msgJson["steering_angle"] = steer_value;
               msgJson["throttle"] = throttle_value;
               //msgJson["throttle"] = .3;
               auto msg = "42[\"steer\"," + msgJson.dump() + "]";
-              std::cout << msg << std::endl;
+              // DEBUG
+              // std::cout << msg << std::endl;
               ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
-              if (pidtuner.hasFinishedRun()) {
-                reset_simulator(ws);
-                pidtuner.updateParams();
+
+              if (twiddle) {
+                pidtuner.accumulateCTE(cte);
+                if (pidtuner.hasFinishedRun() || pidtuner.isOffTrack(cte, speed)) {
+                  pidtuner.twiddle();
+                  pidtuner.print();
+                  reset_simulator(ws);
+                }
               }
             }
           } else {

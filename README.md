@@ -36,7 +36,9 @@ The I tried to increase the speed of the car by using higher constant throttle v
 
 With this setup and some additional manual experiments with regards to the Hyperparameters of the PID controllers I ended up with the following result. 
 
-TODO: fill in the parameters
+steering PID parameters (p=0.14, i=0.00027, d=6).
+throttle PID parameters (p=0.1, i=0.0, d=1).
+
 [![Initial Hyperparameters](https://img.youtube.com/vi/ihwbbllSh9A/0.jpg)](https://www.youtube.com/watch?v=ihwbbllSh9A)
 
 
