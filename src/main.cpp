@@ -22,6 +22,7 @@ double rad2deg(double x) {
 
 const double MAX_SPEED = 100.;
 const double MAX_ANGLE = 25.;
+const double MAX_THROTTLE = 0.7;
 
 const bool twiddle = false;
 
@@ -57,14 +58,23 @@ int main() {
 
   // Lesson 16: PID Control, 11 PID Implementation
   // pid_steering_angle.Init(0,2, 0,004, 3)
+
+  // manual optimzations
   // pid_steering_angle.Init(0.14, 0.00027, 6);
+  // pid_throttle.Init(.1, 0.0, 1);
+
+
+  // twiddle optimizations
   // pid_steering_angle.Init(0.241986, 0.00027, 5.67539),
-  pid_steering_angle.Init(0.290244, 0.00027, 5.67539);
-  //pid_steering_angle.Init(0.134611, 0.000270736, 5);
-  pid_throttle.Init(.1, 0.0, 1);
+  // pid_steering_angle.Init(0.290244, 0.00027, 5.67539);
+  // pid_steering_angle.Init(0.290244, 0.00027, 6.17539);
+  // pid_throttle.Init(0.6, 0, 1);
+
+  pid_steering_angle.Init(0.241986, 0.00027, 5.67539);
+  pid_throttle.Init(0.6, 0, 1);
 
 
-  PIDTuner pidtuner(pid_steering_angle, pid_throttle, 0.2);
+  PIDTuner pidtuner(pid_steering_angle, pid_throttle, 0.1);
 
 
 
@@ -95,7 +105,7 @@ int main() {
               pid_throttle.UpdateError(speed - target_speed);
               // DEBUG
               // std::cout << "Throttle Error: " << pid_throttle.TotalError() << " Target Speed: " << target_speed << std::endl;
-              double throttle_value = 0.7 + pid_throttle.GetControl();
+              double throttle_value = std::min(MAX_THROTTLE, 0.7 + pid_throttle.GetControl());
 
               // DEBUG
               // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << " Throttle Value: " << throttle_value << std::endl;

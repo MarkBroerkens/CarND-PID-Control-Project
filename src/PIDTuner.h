@@ -37,6 +37,7 @@ class PIDTuner {
   int twiddle_param_;
   double error_;
   int ignore_initial_steps;
+  bool offTrack_;
 };
 
 #endif /* SRC_PIDTUNER_H_ */

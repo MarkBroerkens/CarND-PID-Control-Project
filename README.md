@@ -14,9 +14,9 @@ The simulator provides the cross track error (CTE) and the velocity (mph) and cu
 - *The effect each of the P, I, D components of the steering PID controller of the steering.*
 The steering PID controller analyzes the cross track error (CTE) provided by the simulator and calculates the steering angle that tries to bring the car back to the center line (minimial magnitude of CTE).
 
-The P, or "proportional", component had the most directly observable effect on the car's behavior. It causes the car to steer proportionally (and opposite) to the car's distance from the lane center (which is the CTE) - if the car is far to the right it steers hard to the left, if it's slightly to the left it steers slightly to the right.
+The P, or "proportional", component had the most directly observable effect on the car's behavior. It causes the car to steer proportionally (and opposite) to the car's distance from the lane center (which is the CTE) - if the car is far to the right it steers hard to the left, if it's slightly to the left it steers slightly to the right. Bigger values of P result in faster reactions of the steering angle with respect to the CTE. I had to use higher values for higher speed of the car.
 
-The D, or "differential", component counteracts the P component's tendency to overshoot the center line. A properly tuned D parameter will cause the car to approach the center line smoothly.
+The D, or "differential", component counteracts the P component's tendency to overshoot the center line. A properly tuned D parameter will cause the car to approach the center line smoothly. Higher values of P also required higher values of D.
 
 The I, or "integral", component counteracts a bias in the CTE which prevents the P-D controller from reaching the center line. This bias can take several forms, such as a steering drift.
 
@@ -42,8 +42,12 @@ throttle PID parameters (p=0.1, i=0.0, d=1).
 [![Initial Hyperparameters](https://img.youtube.com/vi/ihwbbllSh9A/0.jpg)](https://www.youtube.com/watch?v=ihwbbllSh9A)
 
 
-I then implemented Twiddle. 
-TODO
+I then implemented the Twiddle algorithm for automated optimization of the Hyperparameters of both controllers. This step is quite time consuming since the car needs to pass all critical locations of the track for each combination of parameters. I ran the car for more than a lap in order to be sure that the critical curve after the bridge is handle correctly. These are the final parameters. The behavior of the simulator seems to be different when I try to record it via Quicktime. Thus there is no movie that proves the high speed (up to 85 mph) in the simulator using the follwoing parameters
+
+  
+steering PID parameters (p=0.241986, i=0.00027, d=5.67539).
+throttle PID parameters (p=0.1, i=0.0, d=1).
+
 
 ---
 
