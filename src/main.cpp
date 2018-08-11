@@ -22,7 +22,7 @@ double rad2deg(double x) {
 
 const double MAX_SPEED = 100.;
 const double MAX_ANGLE = 25.;
-const double MAX_THROTTLE = 0.7;
+const double MAX_THROTTLE = 0.3;
 
 const bool twiddle = false;
 
@@ -65,12 +65,8 @@ int main() {
 
 
   // twiddle optimizations
-  // pid_steering_angle.Init(0.241986, 0.00027, 5.67539),
-  // pid_steering_angle.Init(0.290244, 0.00027, 5.67539);
-  // pid_steering_angle.Init(0.290244, 0.00027, 6.17539);
-  // pid_throttle.Init(0.6, 0, 1);
-
-  pid_steering_angle.Init(0.241986, 0.00027, 5.67539);
+  // with constant throttle = 0.3
+  pid_steering_angle.Init(0.135, 0.0015, 8.51561);
   pid_throttle.Init(0.6, 0, 1);
 
 
@@ -113,7 +109,7 @@ int main() {
               json msgJson;
               msgJson["steering_angle"] = steer_value;
               msgJson["throttle"] = throttle_value;
-              //msgJson["throttle"] = .3;
+              // msgJson["throttle"] = .3;
               auto msg = "42[\"steer\"," + msgJson.dump() + "]";
               // DEBUG
               // std::cout << msg << std::endl;

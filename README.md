@@ -34,6 +34,7 @@ The I, or "integral", was set to 0 since the target speed is constantly changing
 Hyperparameters were tuned manually at first. As an inital configuration I used the values from the lesson (p=0,2, i=0,004, d=3). These parameters worked pretty well for constant throttle of 0.3.
 The I tried to increase the speed of the car by using higher constant throttle values and figured out that the car frequently left the track. In order to overcome this issue added a PID controller that minimizes the speed of the car in case of high cross track error and high steering angle.
 
+*Manual Experiments*
 With this setup and some additional manual experiments with regards to the Hyperparameters of the PID controllers I ended up with the following result. 
 
 steering PID parameters (p=0.14, i=0.00027, d=6).
@@ -41,13 +42,15 @@ throttle PID parameters (p=0.1, i=0.0, d=1).
 
 [![Initial Hyperparameters](https://img.youtube.com/vi/ihwbbllSh9A/0.jpg)](https://www.youtube.com/watch?v=ihwbbllSh9A)
 
+*Twiddle*
+I then implemented the Twiddle algorithm for automated optimization of the Hyperparameters of both controllers. This step is quite time consuming since the car needs to pass all critical locations of the track for each combination of parameters. I ran the car for more than a lap in order to be sure that the critical curve after the bridge is handle correctly. 
 
-I then implemented the Twiddle algorithm for automated optimization of the Hyperparameters of both controllers. This step is quite time consuming since the car needs to pass all critical locations of the track for each combination of parameters. I ran the car for more than a lap in order to be sure that the critical curve after the bridge is handle correctly. These are the final parameters. The behavior of the simulator seems to be different when I try to record it via Quicktime. Thus there is no movie that proves the high speed (up to 85 mph) in the simulator using the follwoing parameters
+Using a max throttle of 0.3 a few iterations of the twiddle algorithm resulted in the following hyperparameters. 
 
-  
-steering PID parameters (p=0.241986, i=0.00027, d=5.67539).
+steering PID parameters (p=0.135, i=0.0015, d=8.51561).
 throttle PID parameters (p=0.1, i=0.0, d=1).
 
+[![Twiddled Hyperparameters](https://img.youtube.com/vi/8nSa8rzO8rw/0.jpg)](https://www.youtube.com/watch?v=8nSa8rzO8rw)
 
 ---
 

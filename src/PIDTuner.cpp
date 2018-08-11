@@ -17,7 +17,7 @@ PIDTuner::PIDTuner(PID& pid_steering, PID& pid_throttle, double tolerance)
       ran_for_steps_(0),
       iterations_(0),
       params_ { pid_steering.Kp, pid_steering.Ki, pid_steering.Kd, pid_throttle.Kp, pid_throttle.Ki, pid_throttle.Kd},
-      d_params_ { 0.5, 0.5, 0.5, 0.0, 0.0, 0.0},
+      d_params_ { 1, 1, 1, 0.0, 0.0, 0.0},
       best_err_(-1),
       curr_error_(0),
       twiddle_state_(START),
@@ -54,7 +54,7 @@ void PIDTuner::accumulateCTE(double cte) {
 double PIDTuner::calcAverageError() {
   double averageError = error_ / (ran_for_steps_ - ignore_initial_steps);
   if (offTrack_) {
-    // add penalty
+    // penalty
     averageError += 1000;
   }
   return averageError;
