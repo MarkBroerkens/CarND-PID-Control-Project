@@ -9,7 +9,7 @@ The simulator provides the cross track error (CTE) and the velocity (mph) and cu
 
 [image1]: ./images/simulator.png "Simaluator"
 
-## Rubric Discussion Points
+# Rubric Discussion Points
 
 - *The effect each of the P, I, D components of the steering PID controller of the steering.*
 The steering PID controller analyzes the cross track error (CTE) provided by the simulator and calculates the steering angle that tries to bring the car back to the center line (minimial magnitude of CTE).
@@ -34,7 +34,8 @@ The I, or "integral", was set to 0 since the target speed is constantly changing
 Hyperparameters were tuned manually at first. As an inital configuration I used the values from the lesson (p=0,2, i=0,004, d=3). These parameters worked pretty well for constant throttle of 0.3.
 The I tried to increase the speed of the car by using higher constant throttle values and figured out that the car frequently left the track. In order to overcome this issue added a PID controller that minimizes the speed of the car in case of high cross track error and high steering angle.
 
-*Manual Experiments*
+**Manual Experiments**
+
 With this setup and some additional manual experiments with regards to the Hyperparameters of the PID controllers I ended up with the following result. 
 
 steering PID parameters (p=0.14, i=0.00027, d=6).
@@ -42,7 +43,7 @@ throttle PID parameters (p=0.1, i=0.0, d=1).
 
 [![Initial Hyperparameters](https://img.youtube.com/vi/ihwbbllSh9A/0.jpg)](https://www.youtube.com/watch?v=ihwbbllSh9A)
 
-*Twiddle*
+**Twiddle**
 I then implemented the Twiddle algorithm for automated optimization of the Hyperparameters of both controllers. This step is quite time consuming since the car needs to pass all critical locations of the track for each combination of parameters. I ran the car for more than a lap in order to be sure that the critical curve after the bridge is handle correctly. 
 
 Using a max throttle of 0.3 a few iterations of the twiddle algorithm resulted in the following hyperparameters. 
