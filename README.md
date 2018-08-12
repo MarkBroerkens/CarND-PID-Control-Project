@@ -53,6 +53,17 @@ throttle PID parameters (p=0.1, i=0.0, d=1).
 
 [![Twiddled Hyperparameters](https://img.youtube.com/vi/8nSa8rzO8rw/0.jpg)](https://www.youtube.com/watch?v=8nSa8rzO8rw)
 
+# Extra Material
+The following links to extra material on PID controllers are from the Udacity review. Thanks.
+
+* [A Conceptual Breakdown of PID Controllers](https://hackernoon.com/a-conceptual-breakdown-of-pid-controllers-9fa072a140a5)
+* [Automating tuning of PID Controllers](https://www.researchgate.net/post/Automating_tuning_of_PID_Controllers)
+* [PID Explained for Process Engineers: Part 2 - Tuning Coefficients](https://www.aiche.org/resources/publications/cep/2016/february/pid-explained-process-engineers-part-2-tuning-coefficients)
+* [PID Controller](https://en.wikipedia.org/wiki/PID_controller)
+* [Automatic Controller Tuning using Relay-based Model Identification](http://portal.research.lu.se/ws/files/33100749/ThesisJosefinBerner.pdf)
+* [On Automation of the PID Tuning Procedure](https://pdfs.semanticscholar.org/4bdd/25ea2d463ed7626eb37d18be1687b3a4391e.pdf)
+* [PID Control for self-driving](https://medium.com/@cacheop/pid-control-for-self-driving-1128b42ab2)
+
 ---
 
 # Dependencies
